@@ -24,7 +24,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt-get clean && \
     apt-get update && \
-    apt-get install -y python3.9 chrpath cpio cpp diffstat g++ gawk gcc git locales make patch texinfo git-lfs tree zlib1g zstd liblz4-tool python3-distutils python3-pip screen quilt wget vim git-all fakeroot rsync skopeo sshpass && \
+    apt-get install -y python3.9 chrpath cpio cpp diffstat g++ gawk gcc git locales make patch texinfo git-lfs tree zlib1g zstd liblz4-tool python3-distutils python3-pip screen quilt wget vim git-all fakeroot rsync skopeo sshpass sudo && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen && \
     update-locale LANG=en_US.UTF-8
@@ -38,7 +38,7 @@ WORKDIR ${YOCTO_WORKSPACE}
 ###
 
 ## Clone yocto honister
-RUN git clone -b ${YOCTO_VERSION} git://git.yoctoproject.org/poky ${YOCTO_WORKSPACE}/poky
+RUN git clone -b ${YOCTO_VERSION} https://git.yoctoproject.org/poky ${YOCTO_WORKSPACE}/poky
 WORKDIR ${YOCTO_WORKSPACE}/poky
 RUN source oe-init-build-env ${YOCTO_WORKSPACE}/builddir
 ###
