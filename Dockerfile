@@ -7,9 +7,9 @@ ARG YOCTO_WORKSPACE="/home/${SYS_USER}/yoctoworkdir"
 # Set default sstate cache IP address (running in docker container on the same machine)
 ARG SSTATE_CACHE_IP="172.17.0.1"
 ## Set default version for the different meta layers
-ARG AMX_VERSION="honister_v11.23.3"
-ARG USP_VERSION="honister_v3.6.1"
-ARG CONTAINERS_VERSION="honister_v1.2.2"
+ARG AMX_VERSION="gen_honister_v15.16.0"
+ARG USP_VERSION="honister_v4.2.0"
+ARG CONTAINERS_VERSION="honister_v1.3.2"
 ARG YOCTO_VERSION="honister" 
 # Default target machine: amrv8 cortexa53, could be replaced by container-x86-64
 ARG LCM_TARGET_MACHINE="container-cortexa53"
