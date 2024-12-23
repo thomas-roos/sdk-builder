@@ -2,6 +2,8 @@ FROM ubuntu:22.04 as yocto_base
 
 ARG SYS_USER="lcmuser"
 ARG YOCTO_WORKSPACE="/home/${SYS_USER}/yoctoworkdir"
+# Default target image: image-lcm-container-minimal. Thread image is named image-thread
+ARG IMAGE_CONTAINER="image-lcm-container-minimal"
 
 # Configurable options
 # Set default sstate cache IP address (running in docker container on the same machine)
@@ -10,6 +12,7 @@ ARG SSTATE_CACHE_IP="172.17.0.1"
 ARG AMX_VERSION="gen_honister_v15.16.0"
 ARG USP_VERSION="honister_v4.2.0"
 ARG CONTAINERS_VERSION="honister_v1.3.2"
+ARG THREAD_VERSION="honister_v0.0.4"
 ARG YOCTO_VERSION="honister" 
 # Default target machine: amrv8 cortexa53, could be replaced by container-x86-64
 ARG LCM_TARGET_MACHINE="container-cortexa53"
@@ -61,7 +64,8 @@ RUN git clone -b ${YOCTO_VERSION} https://github.com/openembedded/meta-openembed
 git clone -b ${YOCTO_VERSION} https://github.com/lgirdk/meta-virtualization.git ${YOCTO_WORKSPACE}/meta-lcm/meta-virtualization && \
 git clone -b ${CONTAINERS_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-containers.git ${YOCTO_WORKSPACE}/meta-lcm/meta-containers && \
 git clone -b ${USP_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-usp.git ${YOCTO_WORKSPACE}/meta-lcm/meta-usp && \
-git clone -b ${AMX_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-amx.git ${YOCTO_WORKSPACE}/meta-lcm/meta-amx
+git clone -b ${AMX_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-amx.git ${YOCTO_WORKSPACE}/meta-lcm/meta-amx && \
+git clone -b ${THREAD_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-thread.git ${YOCTO_WORKSPACE}/meta-lcm/meta-thread
 ###
 
 
@@ -76,7 +80,8 @@ bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded/meta-webs
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-virtualization && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-amx && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-usp && \
-bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-containers
+bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-containers && \
+bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-thread/
 ###
 
 ## - Build target image. 
@@ -84,9 +89,9 @@ bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-containers
 ## - Generate esdk installer.
 ## - Copy output installer
 RUN source oe-init-build-env ${YOCTO_WORKSPACE}/builddir && \
-    bitbake image-lcm-container-minimal && \
+    bitbake ${IMAGE_CONTAINER} && \
     rsync -ruq --no-links --progress -e "sshpass -p 'mycacheserverpassword' ssh -p 5555 -o StrictHostKeyChecking=no" ${YOCTO_WORKSPACE}/builddir/sstate-cache/* root@${SSTATE_CACHE_IP}:/srv/sstate-cache/ || true; \
-    bitbake image-lcm-container-minimal -c populate_sdk_ext; \
+    bitbake ${IMAGE_CONTAINER} -c populate_sdk_ext; \
     cp ${YOCTO_WORKSPACE}/builddir/tmp-glibc/deploy/sdk/meta-containers*.sh /tmp/esdk_installer.sh
 
 
