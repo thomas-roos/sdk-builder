@@ -14,8 +14,8 @@ ARG USP_VERSION="honister_v4.2.0"
 ARG CONTAINERS_VERSION="honister_v1.3.2"
 ARG THREAD_VERSION="honister_v0.0.4"
 ARG YOCTO_VERSION="honister" 
-# Default target machine: amrv8 cortexa53, could be replaced by container-x86-64
-ARG LCM_TARGET_MACHINE="container-cortexa53"
+# Default target machine: container-x86-64, could be replaced by container-cortexa53
+ARG LCM_TARGET_MACHINE="container-x86-64"
 
 # Set default shell to bash
 SHELL ["/bin/bash", "-c"]
@@ -144,7 +144,6 @@ RUN /tmp/esdk_installer.sh -y -n -d ${SDK_WORKSPACE} \
     rm -rf ${SDK_WORKSPACE}/cache/*; rm -rf ${SDK_WORKSPACE}/sstate-cache/*; \
     WORKDIR ${SDK_WORKSPACE}; \
     ENV SDK_WORKSPACE=${SDK_WORKSPACE}; \
-    echo "source ${SDK_WORKSPACE}/layers/poky/oe-init-build-env ${SDK_WORKSPACE} && exec bash" > /home/${SYS_USER}/docker-entrypoint.sh; \
-    chmod +x /home/${SYS_USER}/docker-entrypoint.sh;
+    echo "cd ${SDK_WORKSPACE} && source ${SDK_WORKSPACE}/layers/poky/oe-init-build-env ." >> /home/${SYS_USER}/.bashrc;
 
-CMD ["/bin/bash", "-c", "/home/${SYS_USER}/docker-entrypoint.sh"]
+CMD ["/bin/bash"]
