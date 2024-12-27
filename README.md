@@ -4,14 +4,15 @@
 
 ## Introduction
 
-The LCM SDK Builder is designed to offer a systematic approach to rebuild the prpl LCM SDK via a Dockerfile in a customizable manner, resulting in a final container equipped with a preinstalled/ready-to-use Yocto eSDK. Various arguments are available to facilitate the rebuilding of the SDK for specific targets (supported targets: `container-cortexa53` and `container-x86-64`) through the `LCM_TARGET_MACHINE` option.  The list of images for which the sdk can be built are: image-lcm-container-minimal (default one and building a minimal container with UBUS/USP/AMX support) and image-thread to build thread container.
+The LCM SDK Builder is designed to offer a systematic approach to rebuild the prpl LCM SDK via a Dockerfile in a customizable manner, resulting in a final container equipped with a preinstalled/ready-to-use Yocto eSDK. Various arguments are available to facilitate the rebuilding of the SDK for specific targets (supported targets: `container-cortexa53` and `container-x86-64`) through the `LCM_TARGET_MACHINE` option.  The list of images for which the sdk can be built are: `image-lcm-container-minimal` (default one and building a minimal container with UBUS/USP/AMX support) and `image-thread` to build thread container.
 Additionally, other options are provided to configure the IP of the sstate cached server (if available) and the versions of the meta layers used in the SDK construction. Below is the list of options along with their default values:
 
-    * LCM_TARGET_MACHINE="container-x86-64"
+    * LCM_TARGET_MACHINE="container-cortexa53"
     * SSTATE_CACHE_IP="172.17.0.1"
     * AMX_VERSION="gen_honister_v15.16.0"
     * USP_VERSION="honister_v4.2.0"
     * CONTAINERS_VERSION="honister_v1.3.2"
+    * THREAD_VERSION="honister_v0.0.4"
     * YOCTO_VERSION="honister"
     * IMAGE_CONTAINER="image-lcm-container-minimal"
 
