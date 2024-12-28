@@ -98,6 +98,11 @@ RUN source oe-init-build-env ${YOCTO_WORKSPACE}/builddir && \
 
 FROM ubuntu:22.04
 
+## Set docker container information
+LABEL org.opencontainers.image.ref.name="lcm_sdk_x86-64" \
+	org.opencontainers.image.version="v3.2-beta" \
+	version="v3.2-beta"
+
 ARG SYS_USER="lcmuser"
 ARG YOCTO_WORKSPACE="/home/${SYS_USER}/yoctoworkdir"
 ARG SDK_WORKSPACE="/sdkworkdir"
