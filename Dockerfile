@@ -9,11 +9,11 @@ ARG IMAGE_CONTAINER="image-lcm-container-minimal"
 # Set default sstate cache IP address (running in docker container on the same machine)
 ARG SSTATE_CACHE_IP="172.17.0.1"
 ## Set default version for the different meta layers
-ARG AMX_VERSION="gen_honister_v15.16.0"
-ARG USP_VERSION="honister_v4.2.0"
-ARG CONTAINERS_VERSION="honister_v1.3.2"
-ARG THREAD_VERSION="honister_v0.0.4"
-ARG YOCTO_VERSION="honister" 
+ARG AMX_VERSION="gen_honister_v15.16.0_scarthgap"
+ARG USP_VERSION="honister_v4.2.0_scarthgap"
+ARG CONTAINERS_VERSION="honister_v1.3.2_scarthgap"
+ARG THREAD_VERSION="honister_v0.0.4_scarthgap"
+ARG YOCTO_VERSION="scarthgap"
 # Default target machine: container-x86-64, could be replaced by container-cortexa53
 ARG LCM_TARGET_MACHINE="container-x86-64"
 
@@ -57,15 +57,16 @@ RUN mkdir -p ${YOCTO_WORKSPACE}/meta-lcm
 WORKDIR ${YOCTO_WORKSPACE}/meta-lcm
 ###
 
-## Retrieve all required meta layers: 
-## * common meta layers 
+## Retrieve all required meta layers:
+## * common meta layers
 ## * SoftAtHome yocto meta layers (Ambiorix, USP and meta-containers reponsible for handling OCI containers)
 RUN git clone -b ${YOCTO_VERSION} https://github.com/openembedded/meta-openembedded.git ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded && \
 git clone -b ${YOCTO_VERSION} https://github.com/lgirdk/meta-virtualization.git ${YOCTO_WORKSPACE}/meta-lcm/meta-virtualization && \
-git clone -b ${CONTAINERS_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-containers.git ${YOCTO_WORKSPACE}/meta-lcm/meta-containers && \
-git clone -b ${USP_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-usp.git ${YOCTO_WORKSPACE}/meta-lcm/meta-usp && \
-git clone -b ${AMX_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-amx.git ${YOCTO_WORKSPACE}/meta-lcm/meta-amx && \
-git clone -b ${THREAD_VERSION} https://gitlab.com/soft.at.home/buildsystems/yocto/meta-thread.git ${YOCTO_WORKSPACE}/meta-lcm/meta-thread
+git clone -b ${CONTAINERS_VERSION} https://github.com/thomas-roos/meta-containers.git ${YOCTO_WORKSPACE}/meta-lcm/meta-containers && \
+git clone -b ${USP_VERSION} https://github.com/thomas-roos/meta-usp.git ${YOCTO_WORKSPACE}/meta-lcm/meta-usp && \
+git clone -b ${AMX_VERSION} https://github.com/thomas-roos/meta-amx.git ${YOCTO_WORKSPACE}/meta-lcm/meta-amx && \
+git clone -b ${THREAD_VERSION} https://github.com/thomas-roos/meta-thread.git ${YOCTO_WORKSPACE}/meta-lcm/meta-thread && \
+git clone -b ${YOCTO_VERSION} https://github.com/aws4embeddedlinux/meta-aws.git ${YOCTO_WORKSPACE}/meta-lcm/meta-aws
 ###
 
 
@@ -77,6 +78,8 @@ bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded/meta-pyth
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded/meta-networking/ && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded/meta-filesystems/ && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded/meta-webserver/  && \
+bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-openembedded/meta-multimedia/  && \
+bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-aws/  && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-virtualization && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-amx && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-usp && \
@@ -84,7 +87,7 @@ bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-containers && \
 bitbake-layers add-layer ${YOCTO_WORKSPACE}/meta-lcm/meta-thread/
 ###
 
-## - Build target image. 
+## - Build target image.
 ## - Push to sstate cache server. pushing to sstate server is allowed to fail (in case no sstate is configured).
 ## - Generate esdk installer.
 ## - Copy output installer
